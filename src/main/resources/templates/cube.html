@@ -3,50 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Куб</title>
-    <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        .cube {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            transform-style: preserve-3d;
-            transform: rotateX(30deg) rotateY(30deg);
-            animation: rotate 5s infinite linear;
-        }
-        @keyframes rotate {
-            from { transform: rotateX(30deg) rotateY(0deg); }
-            to { transform: rotateX(30deg) rotateY(360deg); }
-        }
-        .face {
-            position: absolute;
-            width: 100px;
-            height: 100px;
-            background: rgba(0, 0, 255, 0.7);
-            border: 2px solid black;
-        }
-        .front  { transform: translateZ(50px); }
-        .back   { transform: rotateY(180deg) translateZ(50px); }
-        .left   { transform: rotateY(-90deg) translateZ(50px); }
-        .right  { transform: rotateY(90deg) translateZ(50px); }
-        .top    { transform: rotateX(90deg) translateZ(50px); }
-        .bottom { transform: rotateX(-90deg) translateZ(50px); }
-    </style>
+    <title>Аффинные преобразования 3D Куба</title>
+    <link rel="stylesheet" href="/css/cube.css">
 </head>
 <body>
-<div class="cube">
-    <div class="face front"></div>
-    <div class="face back"></div>
-    <div class="face left"></div>
-    <div class="face right"></div>
-    <div class="face top"></div>
-    <div class="face bottom"></div>
+<div class="container">
+    <h1>Аффинные преобразования 3D Куба</h1>
+
+    <div class="scene">
+        <svg id="edges" width="300" height="300"></svg>
+        <div class="cube" id="cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="moveCube(-100, 0)">← Влево</button>
+        <button onclick="moveCube(100, 0)">→ Вправо</button>
+        <button onclick="moveCube(0, -100)">↑ Вверх</button>
+        <button onclick="moveCube(0, 100)">↓ Вниз</button>
+        <button onclick="scaleCube(1.2)">Увеличить (×1.2)</button>
+        <button onclick="scaleCube(0.8)">Уменьшить (×0.8)</button>
+        <button onclick="rotateCube(30)">Повернуть на 30°</button>
+        <button onclick="changeColor()">Сменить цвет</button>
+    </div>
 </div>
+
+<script src="/js/cube.js"></script>
 </body>
 </html>
