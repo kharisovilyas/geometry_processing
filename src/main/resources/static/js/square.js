@@ -4,15 +4,20 @@ const scene = document.querySelector(".scene");
 let positionX = 0;
 let positionY = 0;
 let scaleFactor = 1;
-let rotation = 30;
+let rotation = 0;
 
+// Размеры сцены и куба
 const sceneWidth = scene.offsetWidth;
 const sceneHeight = scene.offsetHeight;
-const cubeWidth = 100; // Размер куба (ширина)
-const cubeHeight = 100; // Размер куба (высота)
+const cubeWidth = 100;
+const cubeHeight = 100;
 
 function drawCube() {
-    cube.style.transform = `translate(${positionX}px, ${positionY}px) scale(${scaleFactor}) rotateX(30deg) rotateY(${rotation}deg)`;
+    cube.style.transform = `
+    translate(${positionX}px, ${positionY}px)
+    scale(${scaleFactor})
+    rotate(${rotation}deg)
+  `;
 }
 
 function moveCube(dx, dy) {
@@ -38,6 +43,7 @@ function moveCube(dx, dy) {
 
 function scaleCube(factor) {
     scaleFactor *= factor;
+
 
     moveCube(0, 0);
     drawCube();

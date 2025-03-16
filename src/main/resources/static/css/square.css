@@ -36,11 +36,10 @@ h1 {
 }
 
 .scene {
-    background-color: #0f3460;
     width: 600px;
     height: 600px;
-    perspective: 1000px;
     position: relative;
+    background-color: #0f3460;
 }
 
 .cube {
@@ -49,26 +48,9 @@ h1 {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform-style: preserve-3d;
-    transform: translate(-50%, -50%) rotateX(30deg) rotateY(30deg);
+    transform: translate(-50%, -50%);
     transition: transform 0.5s ease-in-out;
 }
-
-.face {
-    position: absolute;
-    width: 100px;
-    height: 100px;
-    background: rgba(0, 162, 255, 0.7);
-    border: 2px solid white;
-}
-
-.front  { transform: translateZ(50px); }
-.back   { transform: rotateY(180deg) translateZ(50px); }
-.left   { transform: rotateY(-90deg) translateZ(50px); }
-.right  { transform: rotateY(90deg) translateZ(50px); }
-.top    { transform: rotateX(90deg) translateZ(50px); }
-.bottom { transform: rotateX(-90deg) translateZ(50px); }
-
 button {
     background: linear-gradient(45deg, #0f3460, #16213e);
     color: white;
@@ -83,4 +65,11 @@ button {
 button:hover {
     transform: scale(1.1);
     background: #0a1931;
+}
+
+.face {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 162, 255, 0.7);
+    border: 2px solid white;
 }

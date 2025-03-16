@@ -5,10 +5,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class CubeController {
-    @GetMapping("/lab2")
-    public String geometryProcessingCube(Model model) {
+public class SquareController {
+    @GetMapping("/lab1")
+    public String geometryProcessingSquare(Model model) {
         model.addAttribute("size", 100);
-        return "cube";
+        return "square";
     }
 }
