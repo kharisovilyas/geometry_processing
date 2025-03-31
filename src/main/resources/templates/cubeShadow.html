@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive 3D Cube with Shadows</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+
+        #container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #canvas {
+            display: block;
+        }
+
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-group h3 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .slider-container {
+            margin-bottom: 10px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="container">
+    <canvas id="canvas"></canvas>
+
+    <div class="controls">
+        <h2>3D Cube Controls</h2>
+
+        <div class="control-group">
+            <h3>Light Position</h3>
+            <div class="slider-container">
+                <label for="lightX">X: <span id="lightXValue">5</span></label>
+                <input type="range" id="lightX" min="-10" max="10" step="0.1" value="5">
+            </div>
+            <div class="slider-container">
+                <label for="lightY">Y: <span id="lightYValue">5</span></label>
+                <input type="range" id="lightY" min="-10" max="10" step="0.1" value="5">
+            </div>
+            <div class="slider-container">
+                <label for="lightZ">Z: <span id="lightZValue">5</span></label>
+                <input type="range" id="lightZ" min="-10" max="10" step="0.1" value="5">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>Cube Size</h3>
+            <button id="increaseSize">Increase Size</button>
+            <button id="decreaseSize">Decrease Size</button>
+            <div class="slider-container">
+                <label for="cubeSize">Size: <span id="cubeSizeValue">1</span></label>
+                <input type="range" id="cubeSize" min="0.1" max="3" step="0.1" value="1">
+            </div>
+        </div>
+
+        <div class="control-group">
+            <h3>Rotation</h3>
+            <button id="rotateX">Rotate X</button>
+            <button id="rotateY">Rotate Y</button>
+            <button id="rotateZ">Rotate Z</button>
+            <button id="stopRotation">Stop Rotation</button>
+        </div>
+
+        <div class="control-group">
+            <h3>Shadow</h3>
+            <button id="toggleShadow">Toggle Shadow</button>
+            <div class="slider-container">
+                <label for="shadowIntensity">Intensity: <span id="shadowIntensityValue">0.5</span></label>
+                <input type="range" id="shadowIntensity" min="0" max="1" step="0.05" value="0.5">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.min.js"></script>
+<script>
+    // Initialize Three.js scene
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf0f0f0);
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(5, 5, 5);
+
+    // Renderer with shadow map
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+    // Orbit controls for camera
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // Create a cube with shadow
+    let cubeSize = 1;
+    const cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+    const cubeMaterial = new THREE.MeshStandardMaterial({
+        color: 0x3498db,
+        roughness: 0.1,
+        metalness: 0.5
+    });
+    const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+    cube.castShadow = true;
+    cube.receiveShadow = true;
+    scene.add(cube);
+
+    // Create a plane for shadow
+    const planeGeometry = new THREE.PlaneGeometry(20, 20);
+    const planeMaterial = new THREE.MeshStandardMaterial({
+        color: 0xcccccc,
+        roughness: 0.8,
+        metalness: 0.2
+    });
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.rotation.x = -Math.PI / 2;
+    plane.position.y = -1;
+    plane.receiveShadow = true;
+    scene.add(plane);
+
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    scene.add(ambientLight);
+
+    // Add directional light for shadow
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(5, 5, 5);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 1024;
+    directionalLight.shadow.mapSize.height = 1024;
+    directionalLight.shadow.camera.near = 0.5;
+    directionalLight.shadow.camera.far = 20;
+    directionalLight.shadow.camera.left = -5;
+    directionalLight.shadow.camera.right = 5;
+    directionalLight.shadow.camera.top = 5;
+    directionalLight.shadow.camera.bottom = -5;
+    scene.add(directionalLight);
+
+    // Add light helper
+    const lightHelper = new THREE.DirectionalLightHelper(directionalLight);
+    scene.add(lightHelper);
+
+    // Add shadow camera helper
+    const shadowHelper = new THREE.CameraHelper(directionalLight.shadow.camera);
+    scene.add(shadowHelper);
+
+    // Animation variables
+    let rotateX = false;
+    let rotateY = false;
+    let rotateZ = false;
+    let animationId = null;
+
+    // UI Controls
+    document.getElementById('lightX').addEventListener('input', function(e) {
+        const value = parseFloat(e.target.value);
+        directionalLight.position.x = value;
+        document.getElementById('lightXValue').textContent = value.toFixed(1);
+        lightHelper.update();
+    });
+
+    document.getElementById('lightY').addEventListener('input', function(e) {
+        const value = parseFloat(e.target.value);
+        directionalLight.position.y = value;
+        document.getElementById('lightYValue').textContent = value.toFixed(1);
+        lightHelper.update();
+    });
+
+    document.getElementById('lightZ').addEventListener('input', function(e) {
+        const value = parseFloat(e.target.value);
+        directionalLight.position.z = value;
+        document.getElementById('lightZValue').textContent = value.toFixed(1);
+        lightHelper.update();
+    });
+
+    document.getElementById('increaseSize').addEventListener('click', function() {
+        cubeSize = Math.min(cubeSize + 0.1, 3);
+        cube.scale.set(cubeSize, cubeSize, cubeSize);
+        document.getElementById('cubeSize').value = cubeSize;
+        document.getElementById('cubeSizeValue').textContent = cubeSize.toFixed(1);
+    });
+
+    document.getElementById('decreaseSize').addEventListener('click', function() {
+        cubeSize = Math.max(cubeSize - 0.1, 0.1);
+        cube.scale.set(cubeSize, cubeSize, cubeSize);
+        document.getElementById('cubeSize').value = cubeSize;
+        document.getElementById('cubeSizeValue').textContent = cubeSize.toFixed(1);
+    });
+
+    document.getElementById('cubeSize').addEventListener('input', function(e) {
+        cubeSize = parseFloat(e.target.value);
+        cube.scale.set(cubeSize, cubeSize, cubeSize);
+        document.getElementById('cubeSizeValue').textContent = cubeSize.toFixed(1);
+    });
+
+    document.getElementById('rotateX').addEventListener('click', function() {
+        rotateX = true;
+        rotateY = false;
+        rotateZ = false;
+    });
+
+    document.getElementById('rotateY').addEventListener('click', function() {
+        rotateX = false;
+        rotateY = true;
+        rotateZ = false;
+    });
+
+    document.getElementById('rotateZ').addEventListener('click', function() {
+        rotateX = false;
+        rotateY = false;
+        rotateZ = true;
+    });
+
+    document.getElementById('stopRotation').addEventListener('click', function() {
+        rotateX = false;
+        rotateY = false;
+        rotateZ = false;
+    });
+
+    document.getElementById('toggleShadow').addEventListener('click', function() {
+        renderer.shadowMap.enabled = !renderer.shadowMap.enabled;
+        shadowHelper.visible = !shadowHelper.visible;
+    });
+
+    document.getElementById('shadowIntensity').addEventListener('input', function(e) {
+        const value = parseFloat(e.target.value);
+        directionalLight.intensity = value;
+        document.getElementById('shadowIntensityValue').textContent = value.toFixed(2);
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Animation loop
+    function animate() {
+        animationId = requestAnimationFrame(animate);
+
+        if (rotateX) cube.rotation.x += 0.01;
+        if (rotateY) cube.rotation.y += 0.01;
+        if (rotateZ) cube.rotation.z += 0.01;
+
+        controls.update();
+        renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Clean up on page unload
+    window.addEventListener('beforeunload', function() {
+        cancelAnimationFrame(animationId);
+        controls.dispose();
+    });
+</script>
+</body>
+</html>

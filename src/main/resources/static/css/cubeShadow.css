@@ -1,0 +1,95 @@
+body {
+    height: 100vh;
+    background: linear-gradient(45deg, #1a1a2e, #16213e);
+    font-family: Arial, sans-serif;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+h1 {
+    margin: 20px;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+    padding-left: 20px;
+}
+
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.scene-wrapper {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.scene {
+    background-color: #0f3460;
+    width: 600px;
+    height: 600px;
+    perspective: 1000px;
+    position: relative;
+}
+
+.cube {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-style: preserve-3d;
+    transform: translate(-50%, -50%) rotateX(30deg) rotateY(30deg);
+    transition: transform 0.5s ease-in-out;
+}
+
+.face {
+    position: absolute;
+    width: 100px;
+    height: 100px;
+    background: rgba(0, 162, 255, 0.7);
+    border: 2px solid white;
+}
+
+.front  { transform: translateZ(50px); }
+.back   { transform: rotateY(180deg) translateZ(50px); }
+.left   { transform: rotateY(-90deg) translateZ(50px); }
+.right  { transform: rotateY(90deg) translateZ(50px); }
+.top    { transform: rotateX(90deg) translateZ(50px); }
+.bottom { transform: rotateX(-90deg) translateZ(50px); }
+
+.shadow-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+button {
+    background: linear-gradient(45deg, #0f3460, #16213e);
+    color: white;
+    border: none;
+    padding: 15px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.3s;
+    border-radius: 8px;
+}
+
+button:hover {
+    transform: scale(1.1);
+    background: #0a1931;
+}
